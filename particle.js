@@ -52,7 +52,6 @@
                 var green = this.startColor.g + (this.endColor.g - this.startColor.g) * Math.sqrt(1-lifePercent);
                 var blue = this.startColor.b + (this.endColor.b - this.startColor.b) * Math.sqrt(1-lifePercent);
 
-                console.log(red, green, blue);
                 this.object.material.color.setRGB(red, green, blue);
             }
             if (Date.now() - this.timeCreated > this.lifetime) {

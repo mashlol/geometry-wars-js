@@ -3,8 +3,6 @@
     var _id = 0;
 
     var Enemy = function(position) {
-        console.log(Object.keys(window.enemies).length);
-
         var geometry = new THREE.CubeGeometry(0.5, 0.5, 1);
         var material = new THREE.MeshBasicMaterial({color: 0x2222cc});
         var enemy = new THREE.Mesh(geometry, material);
@@ -18,7 +16,6 @@
         if (this.speed < 0.04)
             this.speed = 0.04;
 
-        // Find random spawn location that is not too near to the player
         var spawnPoint;
         while (true) {
             spawnPoint = new THREE.Vector3(Math.random() * 20 - 10, Math.random() * 20 - 10, 0);
@@ -47,7 +44,7 @@
         this.direction = direction.normalize();
 
         if (this.collidesWith(window.player)) {
-            // document.body.innerHTML = "Game Over!";
+            document.body.innerHTML = "Game Over!";
         }
     }
 

@@ -2,7 +2,7 @@
     var _id = 0;
 
     var Particle = function(args) {
-        if (Object.keys(window.particles).length > 1000) {
+        if (Object.keys(window.particles).length > 2000) {
             return;
         }
 
@@ -25,8 +25,8 @@
         if (this.lifetime != -1 && this.lifetime < 50)
             this.lifetime = 50;
 
-        if (size < 0.04)
-            size = 0.04
+        if (size < 0.06)
+            size = 0.06
         var geometry = new THREE.CubeGeometry(size, size / 6.7, 1);
         var material = new THREE.MeshBasicMaterial({color: this.startColor, transparent: true});
         var particle = new THREE.Mesh(geometry, material);
@@ -105,7 +105,7 @@
 
         if (this.mass > 0 && collided) { // && this.object.material.opacity > 0.1) {
             var numParticles = this.mass * 5;
-            var lifetime = this.mass * 200;
+            var lifetime = this.mass * 400;
             for (var theta = 0; theta <= 2 * Math.PI; theta += 2 * Math.PI / numParticles) {
                 (function(particle, theta) {
                     setTimeout(function() {

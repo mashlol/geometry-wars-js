@@ -1,4 +1,4 @@
-var CURVE_ACCURACY = 20;
+var CURVE_ACCURACY = 60;
 
 var xLines = [];
 var yLines = [];
@@ -43,11 +43,7 @@ var updateGrid = function() {
                 var distanceVector = new THREE.Vector2(expectedPos.x - bulletPos.x, expectedPos.y - bulletPos.y);
                 var distance = distanceVector.length();
 
-                if (distance > 2) {
-                    continue;
-                }
-
-                var skewAmount = Math.sqrt(1 / distance) / 8;
+                var skewAmount = 1 / distance;
                 if (skewAmount > 1)
                     skewAmount = 1;
                 var direction = distanceVector.normalize();
@@ -57,6 +53,18 @@ var updateGrid = function() {
                 worldPos.y += direction.y;
             }
 
+            if (worldPos.x - expectedPos.x > 1) {
+                worldPos.x = expectedPos.x + 1;
+            }
+            if (worldPos.x - expectedPos.x < -1) {
+                worldPos.x = expectedPos.x - 1;
+            }
+            if (worldPos.y - expectedPos.y > 1) {
+                worldPos.y = expectedPos.y + 1;
+            }
+            if (worldPos.y - expectedPos.y < -1) {
+                worldPos.y = expectedPos.y - 1;
+            }
             if (!gridIntersections[x])
                 gridIntersections[x] = [];
             gridIntersections[x][y] = worldPos;
@@ -78,13 +86,13 @@ var updateGrid = function() {
                     averagePos.x += gridIntersection.x - xLinePos + 10;
                     averagePos.y += gridIntersection.y;
                     numPoints++;
+                    spline.points.push(new THREE.Vector3(gridIntersection.x - xLinePos + 10, gridIntersection.y, 0));
                 }
             }
             var splinePoint = {
                 x: averagePos.x / numPoints,
                 y: averagePos.y / numPoints
             }
-            spline.points.push(new THREE.Vector3(splinePoint.x, splinePoint.y, 0));
         }
 
         spline.points.push(new THREE.Vector3(0, 10, 0));
@@ -109,13 +117,13 @@ var updateGrid = function() {
                     averagePos.x += gridIntersection.x;
                     averagePos.y += gridIntersection.y - yLinePos + 10;
                     numPoints++;
+                    spline.points.push(new THREE.Vector3(gridIntersection.x, gridIntersection.y - yLinePos + 10, 0));
                 }
             }
             var splinePoint = {
                 x: averagePos.x / numPoints,
                 y: averagePos.y / numPoints
             }
-            spline.points.push(new THREE.Vector3(splinePoint.x, splinePoint.y, 0));
         }
 
         spline.points.push(new THREE.Vector3(10, 0, 0));
@@ -124,71 +132,6 @@ var updateGrid = function() {
         yLines[yLinePos].geometry.vertices = points;
         yLines[yLinePos].geometry.verticesNeedUpdate = true;
     }
-
-    // var particles = [];
-    // for (var id in window.particles) {
-    //     particles.push(window.particles[id]);
-    // };
-
-    // particles.sort(function(a, b) {
-    //     return a.object.position.y - b.object.position.y;
-    // });
-
-    // for (var x = 0; x < w; x++) {
-    //     var spline = new THREE.SplineCurve3([new THREE.Vector3(0, -10, 0)]);
-
-    //     for (var id in particles) {
-    //         var particle = particles[id];
-
-    //         if (particle.lifetime == -1) {
-    //             var particleY = particle.object.position.y;
-    //             var distanceToLine = Math.abs(particle.object.position.x - x + 10);
-    //             if (distanceToLine < 3) {
-    //                 var curveAmount = Math.sqrt(1 / distanceToLine);
-    //                 curveAmount /= 20;
-    //                 if (curveAmount > 0.8)
-    //                     curveAmount = 0.8;
-    //                 spline.points.push(new THREE.Vector3(curveAmount, particleY, 0));
-    //             }
-    //         }
-    //     }
-
-    //     spline.points.push(new THREE.Vector3(0, 10, 0));
-
-    //     var points = spline.getPoints(CURVE_ACCURACY);
-    //     xLines[x].geometry.vertices = points;
-    //     xLines[x].geometry.verticesNeedUpdate = true;
-    // }
-
-    // particles.sort(function(a, b) {
-    //     return a.object.position.x - b.object.position.x;
-    // });
-
-    // for (var y = 0; y < w; y++) {
-    //     var spline = new THREE.SplineCurve3([new THREE.Vector3(-10, 0, 0)]);
-
-    //     for (var id in particles) {
-    //         var particle = particles[id];
-
-    //         if (particle.lifetime == -1) {
-    //             var particleX = particle.object.position.x;
-    //             var distanceToLine = Math.abs(particle.object.position.y - y + 10);
-    //             if (distanceToLine < 3) {
-    //                 var curveAmount = Math.sqrt(1 / distanceToLine);
-    //                 curveAmount /= 20;
-    //                 if (curveAmount > 0.8)
-    //                     curveAmount = 0.8;
-    //                 spline.points.push(new THREE.Vector3(particleX, curveAmount, 0));
-    //             }
-    //         }
-    //     }
-
-    //     spline.points.push(new THREE.Vector3(10, 0, 0));
-
-    //     var points = spline.getPoints(CURVE_ACCURACY);
-    //     yLines[y].geometry.vertices = points;
-    //     yLines[y].geometry.verticesNeedUpdate = true;
-    // }
 }
 
 window.onload = function() {
@@ -197,7 +140,7 @@ window.onload = function() {
     var width = 20;
     var height = 20;
 
-    var camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 1, 1000);
+    window.camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 1, 1000);
 
     var renderer = new THREE.WebGLRenderer();
     window.mapWidth = Math.min(window.innerWidth, window.innerHeight);
@@ -231,12 +174,12 @@ window.onload = function() {
     var plane = new THREE.Mesh(geometry, material);
     scene.add(plane);
 
-    var geometry = new THREE.CubeGeometry(1,1,1);
+    var geometry = new THREE.SphereGeometry(0.5, 20, 20);
     var material = new THREE.MeshBasicMaterial({color: 0xd35400});
     window.player = new THREE.Mesh(geometry, material);
     scene.add(window.player);
 
-    window.player.position.z = 0.01;
+    window.player.position.z = 0.1;
 
     camera.position.z = 18;
 
@@ -263,7 +206,7 @@ window.onload = function() {
         }
 
         var timeSinceLastBullet = Date.now() - lastBullet;
-        if (window.worldMousePos && window.mouseDown && timeSinceLastBullet > 100) {
+        if (window.worldMousePos && window.mouseDown && timeSinceLastBullet > 250) {
             lastBullet = Date.now();
             var direction = new THREE.Vector3(window.worldMousePos.x, window.worldMousePos.y);
             direction.sub(window.player.position).normalize();
@@ -272,7 +215,8 @@ window.onload = function() {
                 position: new THREE.Vector3(window.player.position.x, window.player.position.y, 0),
                 direction: direction,
                 mass: 2,
-                startColor: new THREE.Color(0xf1c40f)
+                startColor: new THREE.Color(0xf1c40f),
+                speed: .3
             });
         }
 
@@ -314,7 +258,7 @@ window.onload = function() {
                     position: new THREE.Vector3(window.player.position.x + Math.random() * particleTrailSize - particleTrailSize/2, window.player.position.y + Math.random() * particleTrailSize - particleTrailSize/2, 0),
                     direction: particleDir,
                     mass: 1,
-                    speed: 0.001,
+                    speed: 0.01,
                     lifetime: 1000,
                     startColor: new THREE.Color(0xb8860b)
                 })
@@ -322,7 +266,7 @@ window.onload = function() {
         }
 
         if (numLoops % spawnSpeed == 0) {
-            new Enemy();
+            // new Enemy();
             spawnSpeed = Math.round(spawnSpeed * 0.98);
         }
 
@@ -335,7 +279,6 @@ window.onload = function() {
     window.keysPressed = {};
 
     render();
-
 
     window.worldMousePos = null;
     window.mouseDown = false;

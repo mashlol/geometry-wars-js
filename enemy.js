@@ -2,9 +2,9 @@
     window.enemies = {};
     var _id = 0;
 
+    var material = new THREE.MeshBasicMaterial({color: 0x2980b9});
     var Enemy = function(position) {
         var geometry = new THREE.CubeGeometry(0.5, 0.5, 1);
-        var material = new THREE.MeshBasicMaterial({color: 0x2222cc});
         var enemy = new THREE.Mesh(geometry, material);
         window.scene.add(enemy);
 
@@ -44,7 +44,7 @@
         this.direction = direction.normalize();
 
         if (this.collidesWith(window.player)) {
-            document.body.innerHTML = "Game Over!";
+            // document.body.innerHTML = "Game Over!";
         }
     }
 

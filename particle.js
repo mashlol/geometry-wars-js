@@ -2,7 +2,7 @@
     var _id = 0;
 
     var Particle = function(args) {
-        if (Object.keys(window.particles).length > 100) {
+        if (Object.keys(window.particles).length > 1000) {
             return;
         }
 
@@ -15,10 +15,23 @@
         this.startColor = args.startColor || Math.round(Math.random() * 16777215);
         this.endColor = args.endColor || this.startColor;
 
-        var geometry = new THREE.CubeGeometry(0.2 * this.mass || 0.08, 0.03 * this.mass || 0.012, 0.1 * this.mass || 0.08);
+        var size = 0.2 * this.mass || 0.08;
+        if (this.lifetime != -1)
+            size *= Math.random()
+
+        if (this.lifetime != -1)
+            this.lifetime *= Math.random();
+
+        if (this.lifetime != -1 && this.lifetime < 50)
+            this.lifetime = 50;
+
+        if (size < 0.04)
+            size = 0.04
+        var geometry = new THREE.CubeGeometry(size, size / 6.7, 1);
         var material = new THREE.MeshBasicMaterial({color: this.startColor, transparent: true});
         var particle = new THREE.Mesh(geometry, material);
         particle.position = args.position;
+
         if (args.direction.y < 0)
             particle.rotation = new THREE.Euler(0, 0, 2 * Math.PI - args.direction.angleTo(new THREE.Vector3(1, 0, 0)));
         else
@@ -90,9 +103,9 @@
         scene.remove(this.object);
         delete window.particles[this.id];
 
-        if (this.mass > 0 && collided && this.object.material.opacity > 0.1) {
-            var numParticles = this.mass * 10;
-            var lifetime = this.mass * 400;
+        if (this.mass > 0 && collided) { // && this.object.material.opacity > 0.1) {
+            var numParticles = this.mass * 5;
+            var lifetime = this.mass * 200;
             for (var theta = 0; theta <= 2 * Math.PI; theta += 2 * Math.PI / numParticles) {
                 (function(particle, theta) {
                     setTimeout(function() {
@@ -109,8 +122,8 @@
                             mass: particle.mass - 1,
                             lifetime: lifetime,
                             speed: speed,
-                            startColor: new THREE.Color(0xff0000),
-                            endColor: new THREE.Color(0xb8860b)
+                            startColor: new THREE.Color(0xc0392b),
+                            endColor: new THREE.Color(0xd35400)
                         });
                     }, 1);
                 })(this, theta);

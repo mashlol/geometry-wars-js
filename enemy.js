@@ -44,7 +44,7 @@
         this.direction = direction.normalize();
 
         if (this.collidesWith(window.player)) {
-            // document.body.innerHTML = "Game Over!";
+            document.body.innerHTML = "Game Over!";
         }
     }
 

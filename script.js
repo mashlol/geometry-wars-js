@@ -75,23 +75,11 @@ var updateGrid = function() {
         var spline = new THREE.SplineCurve3([new THREE.Vector3(0, -10, 0)]);
 
         if (xLinePos != 0) {
-            var averagePos = {
-                x: 0,
-                y: 0
-            }
-            var numPoints = 0;
             for (var y=0; y<19; y++) {
                 var gridIntersection = gridIntersections[xLinePos-1][y];
                 if (gridIntersection.x != xLinePos-10 || gridIntersection.y != y - 9) {
-                    averagePos.x += gridIntersection.x - xLinePos + 10;
-                    averagePos.y += gridIntersection.y;
-                    numPoints++;
                     spline.points.push(new THREE.Vector3(gridIntersection.x - xLinePos + 10, gridIntersection.y, 0));
                 }
-            }
-            var splinePoint = {
-                x: averagePos.x / numPoints,
-                y: averagePos.y / numPoints
             }
         }
 
@@ -106,23 +94,11 @@ var updateGrid = function() {
         var spline = new THREE.SplineCurve3([new THREE.Vector3(-10, 0, 0)]);
 
         if (yLinePos != 0) {
-            var averagePos = {
-                x: 0,
-                y: 0
-            }
-            var numPoints = 0;
             for (var x=0; x<19; x++) {
                 var gridIntersection = gridIntersections[x][yLinePos-1];
                 if (gridIntersection.y != yLinePos-10 || gridIntersection.x != x - 9) {
-                    averagePos.x += gridIntersection.x;
-                    averagePos.y += gridIntersection.y - yLinePos + 10;
-                    numPoints++;
                     spline.points.push(new THREE.Vector3(gridIntersection.x, gridIntersection.y - yLinePos + 10, 0));
                 }
-            }
-            var splinePoint = {
-                x: averagePos.x / numPoints,
-                y: averagePos.y / numPoints
             }
         }
 
@@ -266,7 +242,7 @@ window.onload = function() {
         }
 
         if (numLoops % spawnSpeed == 0) {
-            // new Enemy();
+            new Enemy();
             spawnSpeed = Math.round(spawnSpeed * 0.98);
         }
 

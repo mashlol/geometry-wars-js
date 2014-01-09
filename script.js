@@ -44,8 +44,8 @@ var updateGrid = function() {
                 var distance = distanceVector.length();
 
                 var skewAmount = 1 / distance;
-                if (skewAmount > 1)
-                    skewAmount = 1;
+                if (skewAmount > 0.5)
+                    skewAmount = 0.5;
                 var direction = distanceVector.normalize();
                 direction.multiplyScalar(skewAmount);
 
@@ -182,7 +182,7 @@ window.onload = function() {
         }
 
         var timeSinceLastBullet = Date.now() - lastBullet;
-        if (window.worldMousePos && window.mouseDown && timeSinceLastBullet > 250) {
+        if (window.worldMousePos && window.mouseDown && timeSinceLastBullet > 160) {
             lastBullet = Date.now();
             var direction = new THREE.Vector3(window.worldMousePos.x, window.worldMousePos.y);
             direction.sub(window.player.position).normalize();

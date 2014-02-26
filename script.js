@@ -262,8 +262,8 @@ window.onload = function() {
     window.onmousedown = function(event) {
         window.mouseDown = true;
         window.worldMousePos = new THREE.Vector3(
-            (event.clientX / window.innerWidth) * 2 - 1,
-            (event.clientY / window.innerHeight) * -2 + 1,
+            (event.clientX / window.mapWidth) * 2 - 1,
+            (event.clientY / window.mapWidth) * -2 + 1,
             0.5
         );
         var projector = new THREE.Projector();
